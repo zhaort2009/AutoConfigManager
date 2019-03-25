@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<SERVICES>
+    <SERVICE>
+        <NAME>isps-1.0-SNAPSHOT</NAME>
+        <STARTPATH>D:\sdticbc\Isps_Bs\s-side\s-releases\isps-1.0-SNAPSHOT.jar</STARTPATH>
+        <CHECKPATH>D:\sdticbc\Isps_Bs\s-side\s-releases\isps-1.0-SNAPSHOT.jar</CHECKPATH>
+        <STOPPATH>D:\sdticbc\Isps_Bs\s-side\s-releases\isps-1.0-SNAPSHOT.jar</STOPPATH>
+        <CONFIGPATH>D:\JAVA\NodeJs\iaas.ini</CONFIGPATH>
+        <CONFIGTYPE>ini</CONFIGTYPE>
+    </SERVICE>
+    <SERVICE>
+        <NAME>ISPSManagerService</NAME>
+        <STARTPATH>D:\JAVA\ISPSManagerService\prunsrv.exe</STARTPATH>
+        <CHECKPATH>D:\JAVA\ISPSManagerService\prunsrv.exe</CHECKPATH>
+        <STOPPATH>D:\JAVA\ISPSManagerService\prunsrv.exe</STOPPATH>
+        <CONFIGPATH>D:\JAVA\NodeJs\params.properties</CONFIGPATH>
+        <CONFIGTYPE>properties</CONFIGTYPE>
+    </SERVICE>
+</SERVICES>

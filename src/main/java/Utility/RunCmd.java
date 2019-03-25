@@ -1,14 +1,22 @@
 package Utility;
 
+import Service.ServiceInstance;
+
 import java.util.regex.Pattern;
 
 public abstract class RunCmd {
-    public static RunCmd RunCmdByOs(){
+    protected ServiceInstance serviceInstance = null;
+
+    public RunCmd(ServiceInstance serviceInstance) {
+        this.serviceInstance = serviceInstance;
+    }
+
+    public static RunCmd RunCmdByOs(ServiceInstance service){
         String osName = System.getProperty("os.name");
         if (Pattern.matches("Linux.*", osName)) {
-            return new RunLinuxCmd();
+            return new RunLinuxCmd(service);
         } else if (Pattern.matches("Windows.*", osName)) {
-            return new RunWinCmd();
+            return new RunWinCmd(service);
         } else if (Pattern.matches("Mac.*", osName)) {
             return null;
 
@@ -29,6 +37,9 @@ public abstract class RunCmd {
             case "check":
                 result =  check();
                 break;
+            case "restart":
+                result =  restart();
+                break;
             default:
 
         }
@@ -42,4 +53,6 @@ public abstract class RunCmd {
     public abstract ExecResult stop();
 
     public abstract ExecResult check();
+
+    public abstract ExecResult restart();
 }

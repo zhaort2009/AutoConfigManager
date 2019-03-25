@@ -2,11 +2,12 @@ package Service;
 
 import Utility.Constant;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.Collection;
 import java.util.UUID;
 
-public class ServiceInstance {
+public class ServiceInstance implements Serializable {
     private final String        name;
     private final String        id;
     private final String        address;

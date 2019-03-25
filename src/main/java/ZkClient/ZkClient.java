@@ -10,6 +10,8 @@ public abstract class ZkClient  {
     protected final String connectStr;
     protected CuratorFramework client = null;
 
+    protected final String ROOTPATH = "/services";
+
     public ZkClient(){
         connectStr = ConfigProperties.getInstance().get("zk.connectStr");
         client = CuratorFrameworkFactory.newClient(connectStr,new ExponentialBackoffRetry(1000,3));
@@ -45,6 +47,14 @@ public abstract class ZkClient  {
 
         return isExists;
 
+    }
+
+    public void deleteNode(String path){
+        try {
+            client.delete().forPath(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

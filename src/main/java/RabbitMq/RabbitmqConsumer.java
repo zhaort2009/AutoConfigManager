@@ -1,18 +1,23 @@
 package RabbitMq;
 
+import ZkClient.ZkClientManage;
+import com.alibaba.fastjson.JSONObject;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.ShutdownSignalException;
+import org.apache.zookeeper.server.admin.JsonOutputter;
+
 import java.io.IOException;
 
 
 public class RabbitmqConsumer extends RabbitmqClient implements Runnable, Consumer {
+    private ZkClientManage zkClientManage;
 
 
-
-    public RabbitmqConsumer(String endPointName) throws IOException {
+    public RabbitmqConsumer(String endPointName, ZkClientManage zkClientManage) throws IOException {
         super(endPointName);
+        zkClientManage = zkClientManage;
     }
 
     public void run() {
@@ -39,7 +44,12 @@ public class RabbitmqConsumer extends RabbitmqClient implements Runnable, Consum
     public void handleDelivery(String consumerTag, Envelope env,
                                AMQP.BasicProperties props, byte[] body) throws IOException {
 
-        System.out.println(new String(body));
+        String msg = new String(body,"UTF-8");
+        //json:{"uuid":"1","cmd":"stop","config":[{"ip":"1","port":"2"}]}
+        zkClientManage.writeToCmd();
+        System.out.println(msg);
+        Thread t = Thread.currentThread();
+        System.out.println(t.getName());
     }
 
     /**
@@ -61,4 +71,11 @@ public class RabbitmqConsumer extends RabbitmqClient implements Runnable, Consum
      * Called when a basic.recover-ok is received in reply to a basic.
      */
     public void handleShutdownSignal(String consumerTag, ShutdownSignalException arg1) {}
+
+    public String getCmd(String msg){
+        Object obj =JSONObject.parse(msg);
+
+    }
+    public String getConfig(){}
+
 }
