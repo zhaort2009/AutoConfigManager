@@ -4,6 +4,7 @@ import Utility.ConfigProperties;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
+import org.apache.curator.utils.CloseableUtils;
 
 public abstract class ZkClient  {
 
@@ -55,6 +56,10 @@ public abstract class ZkClient  {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void close(){
+        CloseableUtils.closeQuietly(client);
     }
 
 }

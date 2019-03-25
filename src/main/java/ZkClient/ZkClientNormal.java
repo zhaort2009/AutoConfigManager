@@ -213,6 +213,7 @@ public class ZkClientNormal extends ZkClient {
                 System.out.println("normal byebye");
 
                 zkClientNormal.stop();
+                zkClientNormal.close();
 
             }
         });

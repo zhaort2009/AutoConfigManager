@@ -9,6 +9,7 @@ import com.rabbitmq.client.ShutdownSignalException;
 import org.apache.zookeeper.server.admin.JsonOutputter;
 
 import java.io.IOException;
+import java.util.Set;
 
 
 public class RabbitmqConsumer extends RabbitmqClient implements Runnable, Consumer {
@@ -45,8 +46,10 @@ public class RabbitmqConsumer extends RabbitmqClient implements Runnable, Consum
                                AMQP.BasicProperties props, byte[] body) throws IOException {
 
         String msg = new String(body,"UTF-8");
-        //json:{"uuid":"1","cmd":"stop","config":[{"ip":"1","port":"2"}]}
-        zkClientManage.writeToCmd();
+        //json:{"path":"/services/ip/UUID","cmd":"stop","config":[{"ip":"1","port":"2"}]}
+        if(getCmd(msg)!=null){ zkClientManage.writeToCmd(getPath(msg),getCmd(msg));}
+        if(getConfig(msg)!=null){ zkClientManage.writeToConfigUpdate(getPath(msg),getConfig(msg));}
+
         System.out.println(msg);
         Thread t = Thread.currentThread();
         System.out.println(t.getName());
@@ -72,10 +75,32 @@ public class RabbitmqConsumer extends RabbitmqClient implements Runnable, Consum
      */
     public void handleShutdownSignal(String consumerTag, ShutdownSignalException arg1) {}
 
-    public String getCmd(String msg){
-        Object obj =JSONObject.parse(msg);
+
+    public String getPath(String msg){
+        JSONObject obj =JSONObject.parseObject(msg);
+        Set<String> keySet = obj.keySet();
+        if (keySet.contains("path")){
+            return (String)obj.get("path");
+        }
+        return null;
 
     }
-    public String getConfig(){}
+    public String getCmd(String msg){
+        JSONObject obj =JSONObject.parseObject(msg);
+        Set<String> keySet = obj.keySet();
+        if (keySet.contains("cmd")){
+            return (String)obj.get("cmd");
+        }
+        return null;
+
+    }
+    public String getConfig(String msg){
+        JSONObject obj =JSONObject.parseObject(msg);
+        Set<String> keySet = obj.keySet();
+        if (keySet.contains("config")){
+            return (String)obj.get("config");
+        }
+        return null;
+    }
 
 }

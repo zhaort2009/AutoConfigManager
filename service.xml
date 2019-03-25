@@ -16,4 +16,12 @@
         <CONFIGPATH>D:\JAVA\NodeJs\params.properties</CONFIGPATH>
         <CONFIGTYPE>properties</CONFIGTYPE>
     </SERVICE>
+    <SERVICE>
+        <NAME>MyService</NAME>
+        <STARTPATH>/home/zhaort/IdeaProjects/MyService_jar/startZhaortService.sh</STARTPATH>
+        <CHECKPATH>/home/zhaort/IdeaProjects/MyService_jar/checkZhaortService.sh</CHECKPATH>
+        <STOPPATH>/home/zhaort/IdeaProjects/MyService_jar/stopZhaortService.sh</STOPPATH>
+        <CONFIGPATH>/home/zhaort/IdeaProjects/MyService_jar/configMy</CONFIGPATH>
+        <CONFIGTYPE>properties</CONFIGTYPE>
+    </SERVICE>
 </SERVICES>
