@@ -1,5 +1,6 @@
 package RabbitMq;
 
+import Utility.Constant;
 import ZkClient.ZkClientManage;
 import com.alibaba.fastjson.JSONObject;
 import com.rabbitmq.client.AMQP;
@@ -47,8 +48,8 @@ public class RabbitmqConsumer extends RabbitmqClient implements Runnable, Consum
 
         String msg = new String(body,"UTF-8");
         //json:{"path":"/services/ip/UUID","cmd":"stop","config":[{"ip":"1","port":"2"}]}
-        if(getCmd(msg)!=null){ zkClientManage.writeToCmd(getPath(msg),getCmd(msg));}
-        if(getConfig(msg)!=null){ zkClientManage.writeToConfigUpdate(getPath(msg),getConfig(msg));}
+        if(getCmd(msg)!=null){zkClientManage.writeToCmd(getPath(msg),getCmd(msg));}
+        if(getConfig(msg)!=null){zkClientManage.writeToConfigUpdate(getPath(msg),getConfig(msg));}
 
         System.out.println(msg);
         Thread t = Thread.currentThread();
@@ -79,8 +80,8 @@ public class RabbitmqConsumer extends RabbitmqClient implements Runnable, Consum
     public String getPath(String msg){
         JSONObject obj =JSONObject.parseObject(msg);
         Set<String> keySet = obj.keySet();
-        if (keySet.contains("path")){
-            return (String)obj.get("path");
+        if (keySet.contains(Constant.MsgJsonKey.PATHKEY)){
+            return (String)obj.get(Constant.MsgJsonKey.PATHKEY);
         }
         return null;
 
@@ -88,8 +89,8 @@ public class RabbitmqConsumer extends RabbitmqClient implements Runnable, Consum
     public String getCmd(String msg){
         JSONObject obj =JSONObject.parseObject(msg);
         Set<String> keySet = obj.keySet();
-        if (keySet.contains("cmd")){
-            return (String)obj.get("cmd");
+        if (keySet.contains(Constant.MsgJsonKey.CMDKEY)){
+            return (String)obj.get(Constant.MsgJsonKey.CMDKEY);
         }
         return null;
 
@@ -97,8 +98,8 @@ public class RabbitmqConsumer extends RabbitmqClient implements Runnable, Consum
     public String getConfig(String msg){
         JSONObject obj =JSONObject.parseObject(msg);
         Set<String> keySet = obj.keySet();
-        if (keySet.contains("config")){
-            return (String)obj.get("config");
+        if (keySet.contains(Constant.MsgJsonKey.CONFIGKEY)){
+            return (String)obj.get(Constant.MsgJsonKey.CONFIGKEY);
         }
         return null;
     }

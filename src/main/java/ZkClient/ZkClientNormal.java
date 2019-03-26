@@ -2,6 +2,7 @@ package ZkClient;
 
 import Service.ServiceInstance;
 import Service.ServiceXmlParse;
+import Utility.Constant;
 import Utility.ExecResult;
 import Utility.PropertiesConfig;
 import Utility.RunCmd;
@@ -33,6 +34,7 @@ public class ZkClientNormal extends ZkClient {
 
     public void start() {
         if (serviceList == null || serviceList.size() == 0) {
+            System.out.println("service.xml不合格");
             return;
         }
         createIpFile();
@@ -51,7 +53,7 @@ public class ZkClientNormal extends ZkClient {
 
     private void createService(ServiceInstance service) {
         String UUID = service.getId();
-        String servicePath = ZKPaths.makePath(ROOTPATH, UUID);
+        String servicePath = ZKPaths.makePath(ipPath, UUID);
         byte[] serviceByteArray = SerializationUtils.serialize(service);
         createAndSetData(servicePath, serviceByteArray);
 
@@ -66,7 +68,7 @@ public class ZkClientNormal extends ZkClient {
 
 
     private void createConfigFile(String parentPath, ServiceInstance service) {
-        String configFilePath = ZKPaths.makePath(parentPath, "configFile");
+        String configFilePath = ZKPaths.makePath(parentPath, Constant.ZNodeName.ConfigFileZnode);
         File configFile = new File(service.getConfigPath());
         try {
             byte[] fileContent = Files.readAllBytes(configFile.toPath());
@@ -78,7 +80,8 @@ public class ZkClientNormal extends ZkClient {
     }
 
     private void createConfigUpdate(String parentPath, ServiceInstance service) {
-        String configUpdatePath = ZKPaths.makePath(parentPath, "configUpdate");
+        String configUpdatePath = ZKPaths.makePath(parentPath, Constant.ZNodeName.ConfigUpdateZnode);
+        createAndSetData(configUpdatePath, null);
         NodeCache cache = new NodeCache(client, configUpdatePath);
         NodeCacheListener listener = new NodeCacheListener() {
 
@@ -92,7 +95,7 @@ public class ZkClientNormal extends ZkClient {
                     PropertiesConfig propertiesConfig = new PropertiesConfig(service.getConfigPath());
                     propertiesConfig.Update(new String(cache.getCurrentData().getData(), "UTF-8"));
                     File configFile = new File(service.getConfigPath());
-                    createAndSetData(ZKPaths.makePath(parentPath,"configFile"),Files.readAllBytes(configFile.toPath()));
+                    createAndSetData(ZKPaths.makePath(parentPath,Constant.ZNodeName.ConfigFileZnode),Files.readAllBytes(configFile.toPath()));
                 }
 
             }
@@ -107,7 +110,8 @@ public class ZkClientNormal extends ZkClient {
     }
 
     private void createCmd(String parentPath, ServiceInstance service) {
-        String cmdPath = ZKPaths.makePath(parentPath, "cmd");
+        String cmdPath = ZKPaths.makePath(parentPath, Constant.ZNodeName.CmdZnode);
+        createAndSetData(cmdPath, null);
         NodeCache cache = new NodeCache(client, cmdPath);
         NodeCacheListener listener = new NodeCacheListener() {
 
@@ -138,7 +142,7 @@ public class ZkClientNormal extends ZkClient {
     }
 
     private void createStatus(String parentPath, ServiceInstance service) {
-        String statusPath = ZKPaths.makePath(parentPath, "status");
+        String statusPath = ZKPaths.makePath(parentPath, Constant.ZNodeName.StatusZnode);
         int status = checkStatus(service);
         try {
             createAndSetData(statusPath,String.valueOf(status).getBytes("UTF-8"));
@@ -178,7 +182,7 @@ public class ZkClientNormal extends ZkClient {
                 for(ServiceInstance service:serviceList){
                     int status =  checkStatus(service);
                     String statusPath = ZKPaths.makePath(ipPath,service.getId());
-                    statusPath = ZKPaths.makePath(statusPath,"status");
+                    statusPath = ZKPaths.makePath(statusPath,Constant.ZNodeName.StatusZnode);
                     try {
                         createAndSetData(statusPath,String.valueOf(status).getBytes("UTF-8"));
                     } catch (UnsupportedEncodingException e) {

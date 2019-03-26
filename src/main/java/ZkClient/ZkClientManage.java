@@ -2,6 +2,8 @@ package ZkClient;
 
 import RabbitMq.RabbitmqConsumer;
 import Service.ServiceInstance;
+import Utility.ConfigProperties;
+import Utility.Constant;
 import Utility.JDBCUtil;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.curator.framework.CuratorFramework;
@@ -90,7 +92,7 @@ public class ZkClientManage extends ZkClient {
             }
             return;
         }
-        if(pathList.size() ==4 &&pathList.get(pathList.size()-1).equals("configFile")){
+        if(pathList.size() ==4 &&pathList.get(pathList.size()-1).equals(Constant.ZNodeName.ConfigFileZnode)){
             switch (type){
                 case NODE_ADDED:
                     updateConfigFileDB(event.getData().getData(),pathList.get(pathList.size()-2));
@@ -101,7 +103,7 @@ public class ZkClientManage extends ZkClient {
             }
             return;
         }
-        if(pathList.size() ==4 &&pathList.get(pathList.size()-1).equals("status")){
+        if(pathList.size() ==4 &&pathList.get(pathList.size()-1).equals(Constant.ZNodeName.StatusZnode)){
             switch (type){
                 case NODE_ADDED:
                     try {
@@ -128,7 +130,7 @@ public class ZkClientManage extends ZkClient {
 
 
     public void writeToConfigUpdate(String path,String json){
-        String configUpdate = ZKPaths.makePath(path,"configUpdate");
+        String configUpdate = ZKPaths.makePath(path, Constant.ZNodeName.ConfigUpdateZnode);
         try {
             createAndSetData(configUpdate,json.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
@@ -137,7 +139,7 @@ public class ZkClientManage extends ZkClient {
     }
 
     public void writeToCmd(String path,String cmd){
-        String cmdPath = ZKPaths.makePath(path,"cmd");
+        String cmdPath = ZKPaths.makePath(path,Constant.ZNodeName.CmdZnode);
         try {
             createAndSetData(cmdPath,cmd.getBytes("UTF-8"));
         } catch (UnsupportedEncodingException e) {
@@ -160,7 +162,7 @@ public class ZkClientManage extends ZkClient {
 
     private void startReceiveMq(){
         try {
-            RabbitmqConsumer consumer = new RabbitmqConsumer("ConfigUpdateMq",this);
+            RabbitmqConsumer consumer = new RabbitmqConsumer(ConfigProperties.getInstance().get("rabbitmq.queue"),this);
             ExecutorService es = Executors.newSingleThreadExecutor();
             es.submit(consumer);
         } catch (IOException e) {
@@ -168,6 +170,8 @@ public class ZkClientManage extends ZkClient {
         }
 
     }
+
+
     public static  void main(String [] args){
         ZkClientManage manage = new ZkClientManage();
         manage.start();

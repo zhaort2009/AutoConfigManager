@@ -26,4 +26,19 @@ public class Constant {
         }
     }
 
+    public static class ZNodeName{
+        public static String ConfigUpdateZnode = "configUpdate";
+        public static String ConfigFileZnode = "configFile";
+        public static String CmdZnode = "cmd";
+        public static String StatusZnode = "status";
+        public static String CmdResultZnode = "cmdResult";
+    }
+
+
+    public static class MsgJsonKey{
+        public static String PATHKEY = "path";
+        public static String CMDKEY = "cmd";
+        public static String CONFIGKEY = "config";
+    }
+
 }
