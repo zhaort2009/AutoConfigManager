@@ -130,6 +130,10 @@ public class ZkClientManage extends ZkClient {
 
 
     public void writeToConfigUpdate(String path,String json){
+        if(!isExist(path)){
+            System.out.println("无法写入配置文件");
+            return;
+        }
         String configUpdate = ZKPaths.makePath(path, Constant.ZNodeName.ConfigUpdateZnode);
         try {
             createAndSetData(configUpdate,json.getBytes("UTF-8"));
@@ -139,6 +143,10 @@ public class ZkClientManage extends ZkClient {
     }
 
     public void writeToCmd(String path,String cmd){
+        if(!isExist(path)){
+            System.out.println("不存在该路径");
+            return;
+        }
         String cmdPath = ZKPaths.makePath(path,Constant.ZNodeName.CmdZnode);
         try {
             createAndSetData(cmdPath,cmd.getBytes("UTF-8"));

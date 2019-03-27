@@ -123,10 +123,17 @@ public class ZkClientNormal extends ZkClient {
                     }
                     System.out.println("Node changed: " + cache.getCurrentData().getPath() + ", value: " + new String(cache.getCurrentData().getData()));
                     ExecResult result = RunCmd.RunCmdByOs(service).execute(new String(cache.getCurrentData().getData(), "UTF-8"));
-
+                    if(result==null){
+                        System.out.println("执行结果返回空指针");
+                    }
                     ZKPaths.PathAndNode pathAndNode = ZKPaths.getPathAndNode(cache.getCurrentData().getPath());
                     String cmdResultPath = ZKPaths.makePath(pathAndNode.getPath(),"cmdResult");
                     createAndSetData(cmdResultPath,result.toJson().getBytes("UTF-8"));
+
+
+                    String statusParentPath = ZKPaths.makePath(ipPath,service.getId());
+                    createStatus(statusParentPath,service);
+
                 }
 
             }
@@ -160,9 +167,9 @@ public class ZkClientNormal extends ZkClient {
 
     private int checkStatus(ServiceInstance service) {
         ExecResult checkResult = RunCmd.RunCmdByOs(service).check();
-        if(!checkResult.isSuccess()){
+        if(checkResult==null){
             System.out.println("check 命令执行失败："+checkResult.getErrorStr());
-            return checkResult.getResultCode();
+            return -1;
         }
         if(checkResult.isRunning()){
             return 1;
@@ -180,15 +187,8 @@ public class ZkClientNormal extends ZkClient {
             @Override
             public void run() {
                 for(ServiceInstance service:serviceList){
-                    int status =  checkStatus(service);
-                    String statusPath = ZKPaths.makePath(ipPath,service.getId());
-                    statusPath = ZKPaths.makePath(statusPath,Constant.ZNodeName.StatusZnode);
-                    try {
-                        createAndSetData(statusPath,String.valueOf(status).getBytes("UTF-8"));
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-
+                    String statusParentPath = ZKPaths.makePath(ipPath,service.getId());
+                    createStatus(statusParentPath,service);
                 }
 
 

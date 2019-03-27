@@ -2,6 +2,7 @@ package RabbitMq;
 
 import Utility.Constant;
 import ZkClient.ZkClientManage;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Consumer;
@@ -19,7 +20,7 @@ public class RabbitmqConsumer extends RabbitmqClient implements Runnable, Consum
 
     public RabbitmqConsumer(String endPointName, ZkClientManage zkClientManage) throws IOException {
         super(endPointName);
-        zkClientManage = zkClientManage;
+        this.zkClientManage = zkClientManage;
     }
 
     public void run() {
@@ -90,7 +91,9 @@ public class RabbitmqConsumer extends RabbitmqClient implements Runnable, Consum
         JSONObject obj =JSONObject.parseObject(msg);
         Set<String> keySet = obj.keySet();
         if (keySet.contains(Constant.MsgJsonKey.CMDKEY)){
-            return (String)obj.get(Constant.MsgJsonKey.CMDKEY);
+            String commandstr = (String)obj.get(Constant.MsgJsonKey.CMDKEY);
+            System.out.println("收到命令消息："+commandstr);
+            return commandstr;
         }
         return null;
 
@@ -99,7 +102,10 @@ public class RabbitmqConsumer extends RabbitmqClient implements Runnable, Consum
         JSONObject obj =JSONObject.parseObject(msg);
         Set<String> keySet = obj.keySet();
         if (keySet.contains(Constant.MsgJsonKey.CONFIGKEY)){
-            return (String)obj.get(Constant.MsgJsonKey.CONFIGKEY);
+            JSONArray array = (JSONArray) obj.get(Constant.MsgJsonKey.CONFIGKEY);
+            String updateJson = array.toString();
+            System.out.println("收到配置消息："+updateJson);
+            return updateJson;
         }
         return null;
     }

@@ -18,7 +18,8 @@ public class RabbitmqProducer extends  RabbitmqClient{
 
 
     public static void main(String []args){
-        String configUpdateStr="{\"path\":\"/services/ip/UUID\",\"config\":[{\"ip\":\"1\",\"port\":\"2\"}]}";
+        String configUpdateStr="{\"path\":\"/services/192.168.8.100/8fb60240-8fc4-4b18-9998-ecadcd5258cd\",\"config\":[{\"ip\":\"192.168.1.100\",\"port\":\"2\"}]}";
+       // String cmdUpdateStr="{\"path\":\"/services/192.168.8.100/50a54d38-e9b8-400b-b0cf-0bedb139eb67\",\"cmd\":\"stop\"}";
         RabbitmqProducer producer = null;
         try {
             producer = new RabbitmqProducer(ConfigProperties.getInstance().get("rabbitmq.queue"));

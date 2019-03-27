@@ -1,6 +1,7 @@
 package Utility;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 public class ExecResult {
     private int resultCode ;
@@ -49,12 +50,16 @@ public class ExecResult {
     }
 
     public boolean isRunning() {
-        if(this.resultCode==0 && this.resultStr.length()==0){return true;}
-        else{return false;}
+       if(this.resultCode==0 && this.resultStr.length()!=0){
+            return true;
+        }else{
+            return false;
+        }
 
     }
 
     public String toJson(){
+
         return JSON.toJSONString(this);
     }
 }
